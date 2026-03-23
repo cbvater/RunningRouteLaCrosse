@@ -13,12 +13,21 @@ public class Route {
 
     private String name;
 
-    private int distance;
+    private double distance;
     private String surface;
     private int ftGain;
 
     @Column(columnDefinition = "TEXT")
     private String routeGeoJson;  // stores the full path as a JSON string
 
-    private double runnerRating;
+    private Double runnerRating;
+
+
+    public String getName() { return name; }
+    public Double getDistance() { return distance; }
+    public Integer getFtGain() { return ftGain; }
+    public Double getRunnerRating() { return runnerRating; }
+    public String getRouteGeoJson() { return routeGeoJson; }
+    public String getSurface() { return surface; }
+
 }

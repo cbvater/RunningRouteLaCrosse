@@ -1,4 +1,10 @@
 package com.example.demo.repository;
 
-public class RouteRepository {
+import com.example.demo.model.Route;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RouteRepository extends JpaRepository<Route, Long> {
+    // Nothing needed here for basic use!
 }
