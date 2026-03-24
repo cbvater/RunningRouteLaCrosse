@@ -29,5 +29,6 @@ public class Route {
     public Double getRunnerRating() { return runnerRating; }
     public String getRouteGeoJson() { return routeGeoJson; }
     public String getSurface() { return surface; }
+    public Long getId() { return id; }
 
 }
