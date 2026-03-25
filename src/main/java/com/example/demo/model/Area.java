@@ -16,6 +16,6 @@ public class Area {
     private int distFromLax;
 
     public String getDescription() { return description; }
-    public String getAreaName() {return AreaName; }
-    public int getDistFromLax() {return distFromLax; }
+    public String getAreaName() { return AreaName; }
+    public int getDistFromLax() { return distFromLax; }
 }
