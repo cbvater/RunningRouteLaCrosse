@@ -16,6 +16,7 @@ public class Route {
     private double distance;
     private String surface;
     private int ftGain;
+    private int minFromCampus;
 
     @Column(columnDefinition = "TEXT")
     private String routeGeoJson;  // stores the full path as a JSON string
@@ -30,5 +31,5 @@ public class Route {
     public String getRouteGeoJson() { return routeGeoJson; }
     public String getSurface() { return surface; }
     public Long getId() { return id; }
-
+    public int getMinFromCampus() {return minFromCampus; }
 }
