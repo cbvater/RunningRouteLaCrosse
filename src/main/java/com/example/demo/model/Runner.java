@@ -19,12 +19,13 @@ public class Runner {
     private int weight;
     private String gender;
     private String city;
-    private float Runner_PR;
+    private int VO2;
+    private float Runner_5KPR;
     private double Total_Miles;
     private int Total_Runs;
     private String Favorite_Route;
     private String Favorite_Terrain;
-    private String Physical_Condition;
+    private Boolean injury;
     private String Shoes_Worn;
     private String Watch_Worn;
 
@@ -35,12 +36,13 @@ public class Runner {
     public int getWeight() { return weight; }
     public String getGender() { return gender; }
     public String getCity() { return city; }
-    public float getRunnerPR() { return Runner_PR; }
+    public int getVO2() { return VO2; }
+    public float getRunner5KPR() { return Runner_5KPR; }
     public double getTotalMiles() { return Total_Miles; }
     public int getTotalRuns() { return Total_Runs; }
     public String getFavoriteRoute() { return Favorite_Route; }
     public String getFavoriteTerrain() { return Favorite_Terrain; }
-    public String getPhysical_Condition() { return Physical_Condition; }
+    public Boolean getInjury() { return injury; }
     public String getShoes_Worn() { return Shoes_Worn; }
     public String getWatch_Worn() { return Watch_Worn; }
 
