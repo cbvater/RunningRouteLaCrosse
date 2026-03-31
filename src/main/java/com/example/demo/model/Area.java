@@ -13,9 +13,15 @@ public class Area {
 
     private String description;
     private String AreaName;
-    private int distFromLax;
+    private int milesFromLax;
+    private int zipCode;
+    private String county;
+    private String state;
 
     public String getDescription() { return description; }
     public String getAreaName() { return AreaName; }
-    public int getDistFromLax() { return distFromLax; }
+    public int getMilesFromLax() { return milesFromLax; }
+    public int getZipcode() { return zipCode; }
+    public String getCounty() { return county; }
+    public String getState() { return state; }
 }
