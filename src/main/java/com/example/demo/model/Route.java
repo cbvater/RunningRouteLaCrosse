@@ -26,10 +26,11 @@ public class Route {
 
     private Double runnerRating;
 
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InArea> inAreas = new ArrayList<>();
+    @OneToOne(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
+    private InArea inArea;
 
-    public List<InArea> getInAreas() { return inAreas; }
+    public InArea getInArea() { return inArea; }
+    public Area getArea() { return inArea != null ? inArea.getArea() : null; }
 
     public String getName() { return name; }
     public Double getDistance() { return distance; }
@@ -39,4 +40,5 @@ public class Route {
     public String getSurface() { return surface; }
     public Long getId() { return RouteId; }
     public int getMinFromCampus() {return minFromCampus; }
+
 }

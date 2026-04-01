@@ -14,7 +14,7 @@ public class Area {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long areaId;
 
-    @OneToMany(mappedBy = "area", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "area", cascade = CascadeType.ALL)
     private List<InArea> inAreas = new ArrayList<>();
 
     public List<InArea> getInAreas() { return inAreas; }

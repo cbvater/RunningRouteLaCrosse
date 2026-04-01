@@ -16,7 +16,7 @@ public class InArea {
     @JoinColumn(name = "areaId")
     private Area area;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routeId")
     private Route route;
 
