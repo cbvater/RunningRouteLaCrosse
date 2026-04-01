@@ -11,6 +11,11 @@ public class Area {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long AreaId;
 
+    @OneToMany(mappedBy = "area", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InArea> inAreas = new ArrayList<>();
+
+    public List<InArea> getInAreas() { return inAreas; }
+
     private String description;
     private String AreaName;
     private int milesFromLax;

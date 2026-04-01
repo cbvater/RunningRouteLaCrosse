@@ -23,6 +23,10 @@ public class Route {
 
     private Double runnerRating;
 
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InArea> inAreas = new ArrayList<>();
+
+    public List<InArea> getInAreas() { return inAreas; }
 
     public String getName() { return name; }
     public Double getDistance() { return distance; }
