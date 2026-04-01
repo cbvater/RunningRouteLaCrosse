@@ -12,7 +12,7 @@ public class Area {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long AreaId;
+    private Long areaId;
 
     @OneToMany(mappedBy = "area", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InArea> inAreas = new ArrayList<>();
@@ -26,6 +26,7 @@ public class Area {
     private String county;
     private String state;
 
+    public Long getAreaId() { return areaId; }
     public String getDescription() { return description; }
     public String getAreaName() { return AreaName; }
     public int getMilesFromLax() { return milesFromLax; }

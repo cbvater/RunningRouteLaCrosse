@@ -10,7 +10,7 @@ public class InArea {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long areaId;
+    private Long inAreaId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "areaId")
@@ -25,4 +25,5 @@ public class InArea {
     public Route getRoute() { return route; }
     public Long getAreaId() { return area != null ? area.getAreaId() : null; }
     public Long getRouteId() { return route != null ? route.getId() : null; }
+
 }
