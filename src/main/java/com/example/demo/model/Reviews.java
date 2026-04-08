@@ -20,12 +20,40 @@ public class Reviews {
     private double rating;
     private String comment;
 
-    public Long getReviewId() { return reviewId; }
-    public Route getRoute() { return route; }
-    public Runner getRunner() { return runner; }
-    public double getRating() { return rating; }
-    public String getComment() { return comment; }
-    public Long getRouteId() { return route != null ? route.getId() : null; }
-    public Long getRunnerId() { return runner != null ? runner.getRunnerId() : null; }
+    public Long getReviewId() {
+        return reviewId;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public Runner getRunner() {
+        return runner;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public Long getRouteId() {
+        if (route != null) {
+            return route.getId();
+        } else {
+            return null;
+        }
+    }
+
+    public Long getRunnerId() {
+        if (runner != null) {
+            return runner.getRunnerId();
+        } else {
+            return null;
+        }
+    }
 }
 
