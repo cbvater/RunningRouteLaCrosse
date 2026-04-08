@@ -32,10 +32,10 @@ public class Runner {
     private String Shoes_Worn;
     private String Watch_Worn;
 
-    @ManyToMany(mappedBy = "runners")
-    private List<Route> routes = new ArrayList<>();
+    @OneToMany(mappedBy = "runner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reviews> reviews = new ArrayList<>();
 
-    public List<Route> getRoutes() { return routes; }
+    public List<Reviews> getReviews() { return reviews; }
 
     //Creates getter methods
     public String getRunnerName() { return Runner_Name; }
