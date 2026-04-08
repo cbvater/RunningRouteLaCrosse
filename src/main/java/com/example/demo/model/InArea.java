@@ -23,7 +23,7 @@ public class InArea {
     public Long getInAreaId() { return inAreaId; }
     public Area getArea() { return area; }
     public Route getRoute() { return route; }
-    public Long getAreaId() { return area != null ? area.getAreaId() : null; }
-    public Long getRouteId() { return route != null ? route.getId() : null; }
+    public Long getAreaId() { if(area != null){return area.getAreaId();}else{return null;} }
+    public Long getRouteId() { if(route != null){return route.getId();}else{return null;} }
 
 }
