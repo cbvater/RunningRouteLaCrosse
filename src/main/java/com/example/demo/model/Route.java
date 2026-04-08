@@ -33,9 +33,9 @@ public class Route {
     public Area getArea() { return inArea != null ? inArea.getArea() : null; }
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviews = new ArrayList<>();
+    private List<Reviews> reviews = new ArrayList<>();
 
-    public List<Review> getReviews() { return reviews; }
+    public List<Reviews> getReviews() { return reviews; }
 
     public String getName() { return name; }
     public Double getDistance() { return distance; }
