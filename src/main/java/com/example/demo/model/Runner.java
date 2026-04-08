@@ -29,6 +29,11 @@ public class Runner {
     private String Shoes_Worn;
     private String Watch_Worn;
 
+    @ManyToMany(mappedBy = "runners")
+    private List<Route> routes = new ArrayList<>();
+
+    public List<Route> getRoutes() { return routes; }
+
     //Creates getter methods
     public String getRunnerName() { return Runner_Name; }
     public int getAge() { return age; }
