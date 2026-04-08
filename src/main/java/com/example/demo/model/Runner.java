@@ -2,6 +2,9 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //Creates table
 @Entity
 @Table(name = "runner")
@@ -50,5 +53,5 @@ public class Runner {
     public Boolean getInjury() { return injury; }
     public String getShoes_Worn() { return Shoes_Worn; }
     public String getWatch_Worn() { return Watch_Worn; }
-
+    public Long getRunnerId() { return RunnerId; }
 }

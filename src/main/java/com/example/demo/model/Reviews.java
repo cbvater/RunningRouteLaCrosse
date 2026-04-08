@@ -28,4 +28,4 @@ public class Reviews {
     public Long getRouteId() { return route != null ? route.getId() : null; }
     public Long getRunnerId() { return runner != null ? runner.getRunnerId() : null; }
 }
-}
+
