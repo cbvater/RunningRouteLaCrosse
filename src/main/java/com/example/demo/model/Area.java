@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Area {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long areaId;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "area", cascade = CascadeType.ALL)
     private List<InArea> inAreas = new ArrayList<>();
 

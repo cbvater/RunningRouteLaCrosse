@@ -14,7 +14,6 @@ let activeId = null;
 
 // ── Load routes ──
 async function loadRoutes() {
-  try {
     const res = await fetch(API_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const routes = await res.json();
@@ -25,25 +24,11 @@ async function loadRoutes() {
 
     renderSidebar(routes);
     renderMapRoutes(routes);
-
-  } catch (err) {
-    console.error(err);
-    document.getElementById('statusDot').className = 'dot error';
-    document.getElementById('statusText').textContent = 'Could not connect to API';
-    document.getElementById('routeCount').textContent = 'Failed to load';
-    document.getElementById('routeList').innerHTML =
-      `<div class="no-routes">Could not reach the API at <strong>${API_URL}</strong>. Make sure your Spring Boot app is running.</div>`;
-  }
 }
 
 // ── Sidebar ──
 function renderSidebar(routes) {
   const list = document.getElementById('routeList');
-
-  if (routes.length === 0) {
-    list.innerHTML = '<div class="no-routes">No routes found in the database.</div>';
-    return;
-  }
 
   list.innerHTML = '';
 
@@ -68,18 +53,18 @@ function renderSidebar(routes) {
 
 function getBadgeClass(surface) {
   const s = surface.toLowerCase();
-  if (s.includes('pave') || s.includes('asphalt')) return 'badge-paved';
-  if (s.includes('trail') || s.includes('dirt'))   return 'badge-trail';
-  if (s.includes('gravel'))                         return 'badge-gravel';
+  if (s.includes('pave')) return 'badge-paved';
+  if (s.includes('dirt')) return 'badge-trail';
+  if (s.includes('gravel')) return 'badge-gravel';
   return 'badge-default';
 }
+
 
 // ── Map ──
 function renderMapRoutes(routes) {
   routes.forEach(r => {
     if (!r.routeGeoJson) return;
 
-    try {
       const geo = JSON.parse(r.routeGeoJson);
       const layer = L.geoJSON(geo, {
         style: { color: '#4ade80', weight: 3, opacity: 0.7 },
@@ -89,10 +74,7 @@ function renderMapRoutes(routes) {
       }).addTo(map);
 
       routeLayers[r.id] = layer;
-      console.log('Layer stored with ID:', r.id); // ← now in the right place
-    } catch (e) {
-      console.warn(`Invalid GeoJSON for route ${r.id}`, e);
-    }
+      console.log('Layer stored with ID:', r.id);
   });
 
   const allLayers = Object.values(routeLayers);

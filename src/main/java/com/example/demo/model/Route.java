@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class Route {
 
     private Double runnerRating;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
     private InArea inArea;
 
