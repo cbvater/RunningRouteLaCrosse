@@ -21,6 +21,19 @@ public class Route {
     private int ftGain;
     private int minFromCampus;
 
+    @Override
+    public String toString() {
+        return "Route{" +
+                "id=" + RouteId +
+                ", name='" + name + '\'' +
+                ", distance=" + distance +
+                ", surface='" + surface + '\'' +
+                ", ftGain=" + ftGain +
+                ", minFromCampus=" + minFromCampus +
+                ", runnerRating=" + runnerRating +
+                '}';
+    }
+
     @Column(columnDefinition = "TEXT")
     private String routeGeoJson;  // stores the full path as a JSON string
 
