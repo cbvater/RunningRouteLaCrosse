@@ -1,25 +1,27 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Route;
-import com.example.demo.repository.RouteRepository;
+import com.example.demo.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/routes")
+@RequestMapping("/routes")
 public class RouteController {
 
     @Autowired
-    private RouteRepository routeRepository;
+    private RouteService routeService;
 
     @GetMapping
     public List<Route> getAllRoutes() {
-        return routeRepository.findAll();
+        return routeService.getAllRoutes();
+    }
+
+    @GetMapping("/top-rated")
+    public List<Route> getTopRated(@RequestParam double minRating) {
+        return routeService.getTopRatedRoutes(minRating);
     }
 }

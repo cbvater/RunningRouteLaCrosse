@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Running Routes</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0f0e;
+      --surface: #161714;
+      --surface-2: #1d1f1c;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.14);
+      --text: #e8e8e4;
+      --text-muted: #7a7d74;
+      --text-dim: #4a4d44;
+      --green: #a8d672;
+      --green-dim: rgba(168, 214, 114, 0.12);
+      --blue: #7ab8f5;
+      --blue-dim: rgba(122, 184, 245, 0.12);
+      --amber: #f5c76a;
+      --amber-dim: rgba(245, 199, 106, 0.12);
+      --red: #f57a7a;
+      --red-dim: rgba(245, 122, 122, 0.12);
+      --purple: #c4a8f5;
+      --purple-dim: rgba(196, 168, 245, 0.12);
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    html { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; }
+
+    body {
+      min-height: 100vh;
+      padding: 3rem 1.5rem;
+      background:
+        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(168,214,114,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 10% 90%, rgba(122,184,245,0.04) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .wrap { max-width: 700px; margin: 0 auto; }
+
+    header { margin-bottom: 3rem; }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .desc { font-size: 14px; color: var(--text-muted); font-weight: 300; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: var(--border-hover); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+
+    .pill {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+      border: 1px solid;
+    }
+
+    .pill-create { color: var(--green); background: var(--green-dim); border-color: rgba(168,214,114,0.25); }
+    .pill-read   { color: var(--blue);  background: var(--blue-dim);  border-color: rgba(122,184,245,0.25); }
+    .pill-update { color: var(--amber); background: var(--amber-dim); border-color: rgba(245,199,106,0.25); }
+    .pill-delete { color: var(--red);   background: var(--red-dim);   border-color: rgba(245,122,122,0.25); }
+    .pill-adv    { color: var(--purple);background: var(--purple-dim);border-color: rgba(196,168,245,0.25); }
+
+    .card-title { font-size: 15px; font-weight: 600; color: var(--text); }
+
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 10px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+
+    label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.15s, background 0.15s;
+      -webkit-appearance: none;
+    }
+
+    select { cursor: pointer; }
+    select option { background: #1d1f1c; color: var(--text); }
+
+    input::placeholder, textarea::placeholder { color: var(--text-dim); }
+    input:focus, textarea:focus, select:focus { border-color: var(--border-hover); background: #20221f; }
+
+    textarea { resize: vertical; min-height: 72px; }
+
+    .mb { margin-bottom: 10px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:hover { opacity: 0.85; }
+
+    .btn-create { color: var(--green); background: var(--green-dim); border-color: rgba(168,214,114,0.3); }
+    .btn-read   { color: var(--blue);  background: var(--blue-dim);  border-color: rgba(122,184,245,0.3); }
+    .btn-update { color: var(--amber); background: var(--amber-dim); border-color: rgba(245,199,106,0.3); }
+    .btn-delete { color: var(--red);   background: var(--red-dim);   border-color: rgba(245,122,122,0.3); }
+    .btn-adv    { color: var(--purple);background: var(--purple-dim);border-color: rgba(196,168,245,0.3); }
+
+    .result {
+      margin-top: 1rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: none;
+    }
+    .result.visible { display: block; }
+    .result.error { color: var(--red); border-color: rgba(245,122,122,0.2); font-family: 'DM Mono', monospace; font-size: 12px; }
+    .result.success { color: var(--green); border-color: rgba(168,214,114,0.2); font-family: 'DM Mono', monospace; font-size: 12px; }
+
+    /* Review cards inside read result */
+    .review-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .review-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+    }
+
+    .review-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .review-who {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .review-route {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .review-rating {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--amber);
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,199,106,0.25);
+      border-radius: 100px;
+      padding: 2px 8px;
+    }
+
+    .review-comment {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    footer {
+      margin-top: 3rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">CS364 — Databases</p>
+    <h1>Running Routes</h1>
+    <p class="desc">Manage routes, runners, and reviews</p>
+  </header>
+
+  <!-- CREATE -->
+  <div class="card">
+    <div class="card-header">
+      <span class="pill pill-create">Create</span>
+      <span class="card-title">Add a review</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Runner</label>
+        <select id="c-runner">
+          <option value="">Loading runners...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Route</label>
+        <select id="c-route">
+          <option value="">Loading routes...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Rating (1–5)</label>
+        <input type="number" id="c-rating" placeholder="e.g. 4.5" min="1" max="5" step="0.1" />
+      </div>
+    </div>
+    <div class="form-group mb">
+      <label>Comment</label>
+      <textarea id="c-comment" placeholder="Write your review..."></textarea>
+    </div>
+    <button class="btn btn-create" onclick="handleCreate()">Submit review</button>
+    <div class="result" id="c-result"></div>
+  </div>
+
+  <!-- READ -->
+  <div class="card">
+    <div class="card-header">
+      <span class="pill pill-read">Read</span>
+      <span class="card-title">View reviews for a route</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Route</label>
+        <select id="r-route">
+          <option value="">Loading routes...</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-read" onclick="handleRead()" style="margin-top:10px;">Get reviews</button>
+    <div class="result" id="r-result"></div>
+  </div>
+
+  <!-- UPDATE -->
+  <div class="card">
+    <div class="card-header">
+      <span class="pill pill-update">Update</span>
+      <span class="card-title">Update a runner's 5K PR</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Runner</label>
+        <select id="u-runner">
+          <option value="">Loading runners...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>New 5K PR (minutes)</label>
+        <input type="number" id="u-pr" placeholder="e.g. 22.5" step="0.1" />
+      </div>
+    </div>
+    <button class="btn btn-update" onclick="handleUpdate()" style="margin-top:10px;">Update PR</button>
+    <div class="result" id="u-result"></div>
+  </div>
+
+  <!-- DELETE -->
+  <div class="card">
+    <div class="card-header">
+      <span class="pill pill-delete">Delete</span>
+      <span class="card-title">Delete a review</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Review ID</label>
+        <input type="number" id="d-review-id" placeholder="e.g. 7" />
+      </div>
+    </div>
+    <button class="btn btn-delete" onclick="handleDelete()" style="margin-top:10px;">Delete review</button>
+    <div class="result" id="d-result"></div>
+  </div>
+
+  <!-- ADVANCED -->
+  <div class="card">
+    <div class="card-header">
+      <span class="pill pill-adv">Advanced</span>
+      <span class="card-title">Find top-rated routes</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Minimum average rating</label>
+        <input type="number" id="a-min-rating" placeholder="e.g. 4.0" min="1" max="5" step="0.1" />
+      </div>
+    </div>
+    <button class="btn btn-adv" onclick="handleAdvanced()" style="margin-top:10px;">Search routes</button>
+    <div class="result" id="a-result"></div>
+  </div>
+
+  <hr class="divider" />
+  <footer>connected to localhost:8080</footer>
+
+</div>
+
+<script>
+  const BASE = 'http://localhost:8082';
+
+  async function apiFetch(url, options) {
+    const res = await fetch(BASE + url, options);
+    if (!res.ok) throw new Error(res.status);
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  }
+
+  function show(id, html, type) {
+    const el = document.getElementById(id);
+    el.className = 'result visible' + (type ? ' ' + type : '');
+    if (type === 'error' || type === 'success') {
+      el.textContent = html;
+    } else {
+      el.innerHTML = html;
+    }
+  }
+
+  function populateSelect(selectId, items, valueKey, labelKey) {
+    const sel = document.getElementById(selectId);
+    sel.innerHTML = '<option value="">Select...</option>';
+    items.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item[valueKey];
+      opt.textContent = item[labelKey];
+      sel.appendChild(opt);
+    });
+  }
+
+  async function loadDropdowns() {
+    try {
+      const [runners, routes] = await Promise.all([
+        apiFetch('/runners'),
+        apiFetch('/routes')
+      ]);
+
+      populateSelect('c-runner', runners, 'RunnerId', 'runnerName');
+      populateSelect('c-route',  routes,  'id',       'name');
+      populateSelect('r-route',  routes,  'name',     'name');
+      populateSelect('u-runner', runners, 'RunnerId', 'runnerName');
+    } catch(e) {
+      console.error('Failed to load dropdowns:', e);
+    }
+  }
+
+  async function handleCreate() {
+    const runnerId = document.getElementById('c-runner').value;
+    const routeId  = document.getElementById('c-route').value;
+    const rating   = document.getElementById('c-rating').value;
+    const comment  = document.getElementById('c-comment').value;
+    console.log('Submitting:', { runnerId, routeId, rating, comment }); // add this
+
+    if (!runnerId || !routeId || !rating || !comment)
+      return show('c-result', 'Please fill in all fields.', 'error');
+    try {
+      await apiFetch('/reviews', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ runnerId, routeId, rating: parseFloat(rating), comment })
+      });
+      show('c-result', 'Review submitted successfully.', 'success');
+    } catch(e) { show('c-result', 'Error submitting review: ' + e.message, 'error'); }
+  }
+
+  async function handleRead() {
+    const name = document.getElementById('r-route').value;
+    if (!name) return show('r-result', 'Please select a route.', 'error');
+    try {
+      const data = await apiFetch('/reviews/route?name=' + encodeURIComponent(name));
+      if (!data || !data.length) return show('r-result', 'No reviews found for that route.', '');
+
+      const cards = data.map(r => `
+        <div class="review-card">
+          <div class="review-meta">
+            <div>
+              <div class="review-who">${r.runnerName}</div>
+              <div class="review-route">${r.routeName}</div>
+            </div>
+            <span class="review-rating">${parseFloat(r.rating).toFixed(1)} / 5</span>
+          </div>
+          <div class="review-comment">"${r.comment}"</div>
+        </div>
+      `).join('');
+
+      show('r-result', `<div class="review-list">${cards}</div>`);
+    } catch(e) { show('r-result', 'Error fetching reviews: ' + e.message, 'error'); }
+  }
+
+  async function handleUpdate() {
+    const id = document.getElementById('u-runner').value;
+    const pr = document.getElementById('u-pr').value;
+    if (!id || !pr) return show('u-result', 'Please fill in all fields.', 'error');
+    try {
+      await apiFetch('/runners/' + id + '/pr', {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ pr: parseFloat(pr) })
+      });
+      const name = document.getElementById('u-runner').selectedOptions[0].text;
+      show('u-result', `${name}'s PR updated to ${parseFloat(pr).toFixed(1)} min.`, 'success');
+    } catch(e) { show('u-result', 'Error updating PR: ' + e.message, 'error'); }
+  }
+
+  async function handleDelete() {
+    const id = document.getElementById('d-review-id').value;
+    if (!id) return show('d-result', 'Please enter a review ID.', 'error');
+    try {
+      await apiFetch('/reviews/' + id, { method: 'DELETE' });
+      show('d-result', `Review ${id} deleted.`, 'success');
+    } catch(e) { show('d-result', 'Error deleting review: ' + e.message, 'error'); }
+  }
+
+  async function handleAdvanced() {
+    const min = document.getElementById('a-min-rating').value;
+    if (!min) return show('a-result', 'Please enter a minimum rating.', 'error');
+    try {
+      const data = await apiFetch('/routes/top-rated?minRating=' + min);
+      if (!data || !data.length) return show('a-result', 'No routes found above that rating.', '');
+
+      const cards = data.map(r => `
+        <div class="review-card">
+          <div class="review-meta">
+            <div class="review-who">${r.name}</div>
+            <span class="review-rating">${parseFloat(r.runnerRating).toFixed(1)} / 5</span>
+          </div>
+          <div class="review-route">${r.distance} mi &nbsp;·&nbsp; ${r.surface} &nbsp;·&nbsp; ${r.ftGain} ft gain</div>
+        </div>
+      `).join('');
+
+      show('a-result', `<div class="review-list">${cards}</div>`);
+    } catch(e) { show('a-result', 'Error fetching routes: ' + e.message, 'error'); }
+  }
+
+  loadDropdowns();
+</script>
+</body>
+</html>

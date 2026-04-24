@@ -18,11 +18,10 @@ public class RunningRoutes {
 
 	}
 
-	@Bean
-	public CommandLineRunner run(RouteRepository routeRepository) {
-		return args -> {
-			List<Route> routes = routeRepository.findNameOfAllRoutes();
-			routes.forEach(System.out::println);
-		};
-	}
 }
+
+//C - users can add reviews to route
+//R - User inputs route name → returns all reviews for that route
+//U - users can update 5k_pr to runner
+//D - users can delete reviews to route
+//Advanced - User inputs minimum rating (e.g. 4.0) → returns all routes with avg review >= 4.0

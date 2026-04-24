@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,11 +10,13 @@ public class Reviews {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "routeId")
     private Route route;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "runnerId")
     private Runner runner;
 
@@ -55,5 +58,9 @@ public class Reviews {
             return null;
         }
     }
+    public void setRoute(Route route) { this.route = route; }
+    public void setRunner(Runner runner) { this.runner = runner; }
+    public void setRating(double rating) { this.rating = rating; }
+    public void setComment(String comment) { this.comment = comment; }
 }
 

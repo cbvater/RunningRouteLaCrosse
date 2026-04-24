@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8082/api/routes';
+const API_URL = 'http://localhost:8082/routes';
 
 // ── Map setup ──
 const map = L.map('map', { zoomControl: false }).setView([43.818, -91.238], 13);

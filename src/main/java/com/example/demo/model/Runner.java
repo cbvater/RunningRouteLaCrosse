@@ -37,6 +37,9 @@ public class Runner {
 
     public List<Reviews> getReviews() { return reviews; }
 
+    public void setRunner5KPR(float pr) { this.Runner_5KPR = pr; }
+
+
     //Creates getter methods
     public String getRunnerName() { return Runner_Name; }
     public int getAge() { return age; }

@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Entity
+@Entity(name = "Routes")
 @Table(name = "routes")
 public class Route {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private Long RouteId;
 
     private String name;
