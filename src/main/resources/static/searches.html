@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Route Explorer — Searches</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600&display=swap" rel="stylesheet" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+          --bg:          #0e0f0e;
+          --surface:     #161714;
+          --surface-2:   #1d1f1c;
+          --border:      rgba(255,255,255,0.07);
+          --border-hover:rgba(255,255,255,0.14);
+          --text:        #e8e8e4;
+          --text-muted:  #7a7d74;
+          --text-dim:    #3a3d34;
+          --green:       #a8d672;
+          --green-dim:   rgba(168,214,114,0.1);
+          --blue:        #7ab8f5;
+          --blue-dim:    rgba(122,184,245,0.1);
+          --amber:       #f5c76a;
+          --amber-dim:   rgba(245,199,106,0.1);
+          --red:         #f57a7a;
+          --purple:      #c4a8f5;
+          --purple-dim:  rgba(196,168,245,0.1);
+          --cyan:        #6ae8f5;
+          --cyan-dim:    rgba(106,232,245,0.1);
+          --radius:      10px;
+          --radius-sm:   6px;
+        }
+
+        html { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; }
+
+        body {
+          min-height: 100vh;
+          padding: 3rem 1.5rem 5rem;
+          background:
+            radial-gradient(ellipse 70% 40% at 90% 5%,  rgba(168,214,114,0.05) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 50% at 5%  95%, rgba(122,184,245,0.04) 0%, transparent 60%),
+            var(--bg);
+        }
+
+        .wrap { max-width: 780px; margin: 0 auto; }
+
+        /* ── Header ── */
+        header { margin-bottom: 3rem; }
+        .eyebrow {
+          font-family: 'DM Mono', monospace;
+          font-size: 11px;
+          letter-spacing: 0.15em;
+          color: var(--green);
+          text-transform: uppercase;
+          margin-bottom: 0.5rem;
+        }
+        h1 {
+          font-size: 32px;
+          font-weight: 600;
+          letter-spacing: -0.02em;
+          line-height: 1.1;
+          margin-bottom: 0.5rem;
+        }
+        .desc { font-size: 14px; color: var(--text-muted); font-weight: 300; }
+
+        /* ── Query Cards ── */
+        .query-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          margin-bottom: 1.25rem;
+          overflow: hidden;
+          transition: border-color 0.2s;
+        }
+        .query-card:hover { border-color: var(--border-hover); }
+
+        .card-top {
+          padding: 1.25rem 1.5rem;
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 1rem;
+          cursor: pointer;
+          user-select: none;
+        }
+
+        .card-top-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .pill {
+          font-family: 'DM Mono', monospace;
+          font-size: 10px;
+          font-weight: 500;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          padding: 3px 10px;
+          border-radius: 100px;
+          border: 1px solid;
+          flex-shrink: 0;
+        }
+
+        .pill-green  { color: var(--green);  background: var(--green-dim);  border-color: rgba(168,214,114,0.25); }
+        .pill-blue   { color: var(--blue);   background: var(--blue-dim);   border-color: rgba(122,184,245,0.25); }
+        .pill-amber  { color: var(--amber);  background: var(--amber-dim);  border-color: rgba(245,199,106,0.25); }
+        .pill-purple { color: var(--purple); background: var(--purple-dim); border-color: rgba(196,168,245,0.25); }
+        .pill-cyan   { color: var(--cyan);   background: var(--cyan-dim);   border-color: rgba(106,232,245,0.25); }
+
+        .card-title { font-size: 15px; font-weight: 600; }
+        .card-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-top: 2px; }
+
+        .chevron {
+          color: var(--text-muted);
+          font-size: 14px;
+          transition: transform 0.2s;
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+        .query-card.open .chevron { transform: rotate(180deg); }
+
+        /* ── Card Body ── */
+        .card-body {
+          display: none;
+          padding: 0 1.5rem 1.5rem;
+          border-top: 1px solid var(--border);
+        }
+        .query-card.open .card-body { display: block; }
+
+        .card-body-inner { padding-top: 1.25rem; }
+
+        /* ── SQL preview ── */
+        .sql-block {
+          background: var(--surface-2);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          padding: 0.875rem 1rem;
+          font-family: 'DM Mono', monospace;
+          font-size: 11.5px;
+          color: var(--text-muted);
+          line-height: 1.7;
+          margin-bottom: 1rem;
+          white-space: pre;
+          overflow-x: auto;
+        }
+        .sql-kw  { color: var(--blue); }
+        .sql-fn  { color: var(--purple); }
+        .sql-str { color: var(--amber); }
+        .sql-num { color: var(--green); }
+
+        /* ── Controls ── */
+        .controls {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-bottom: 1rem;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        label {
+          font-family: 'DM Mono', monospace;
+          font-size: 11px;
+          letter-spacing: 0.05em;
+          color: var(--text-muted);
+        }
+
+        input, select {
+          background: var(--surface-2);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          color: var(--text);
+          font-family: 'Sora', sans-serif;
+          font-size: 13px;
+          padding: 8px 11px;
+          outline: none;
+          transition: border-color 0.15s;
+          -webkit-appearance: none;
+        }
+        input:focus, select:focus { border-color: var(--border-hover); }
+        select { cursor: pointer; }
+        select option { background: #1d1f1c; }
+
+        .btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 16px;
+          border-radius: var(--radius-sm);
+          font-family: 'DM Mono', monospace;
+          font-size: 12px;
+          letter-spacing: 0.05em;
+          font-weight: 500;
+          cursor: pointer;
+          border: 1px solid;
+          transition: opacity 0.15s, transform 0.1s;
+          white-space: nowrap;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn:hover  { opacity: 0.85; }
+        .btn-green  { color: var(--green);  background: var(--green-dim);  border-color: rgba(168,214,114,0.3); }
+        .btn-blue   { color: var(--blue);   background: var(--blue-dim);   border-color: rgba(122,184,245,0.3); }
+        .btn-amber  { color: var(--amber);  background: var(--amber-dim);  border-color: rgba(245,199,106,0.3); }
+        .btn-purple { color: var(--purple); background: var(--purple-dim); border-color: rgba(196,168,245,0.3); }
+        .btn-cyan   { color: var(--cyan);   background: var(--cyan-dim);   border-color: rgba(106,232,245,0.3); }
+
+        /* ── Results ── */
+        .result-area {
+          margin-top: 1rem;
+          display: none;
+        }
+        .result-area.visible { display: block; }
+
+        .result-label {
+          font-family: 'DM Mono', monospace;
+          font-size: 10px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--text-dim);
+          margin-bottom: 8px;
+        }
+
+        .error-msg {
+          background: rgba(245,122,122,0.08);
+          border: 1px solid rgba(245,122,122,0.2);
+          border-radius: var(--radius-sm);
+          padding: 0.75rem 1rem;
+          font-family: 'DM Mono', monospace;
+          font-size: 12px;
+          color: var(--red);
+        }
+
+        /* ── Data Table ── */
+        .data-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 13px;
+        }
+        .data-table th {
+          font-family: 'DM Mono', monospace;
+          font-size: 10px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          text-align: left;
+          padding: 8px 12px;
+          border-bottom: 1px solid var(--border);
+          white-space: nowrap;
+        }
+        .data-table td {
+          padding: 10px 12px;
+          border-bottom: 1px solid var(--border);
+          color: var(--text);
+          vertical-align: middle;
+        }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .rank-badge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 22px; height: 22px;
+          border-radius: 50%;
+          font-family: 'DM Mono', monospace;
+          font-size: 11px;
+          font-weight: 500;
+          background: var(--surface-2);
+          border: 1px solid var(--border);
+          color: var(--text-muted);
+        }
+        .rank-badge.gold   { background: rgba(245,199,106,0.15); border-color: rgba(245,199,106,0.3); color: var(--amber); }
+        .rank-badge.silver { background: rgba(200,200,200,0.1);  border-color: rgba(200,200,200,0.2); color: #c8c8c8; }
+        .rank-badge.bronze { background: rgba(205,127,50,0.1);   border-color: rgba(205,127,50,0.2);  color: #cd7f32; }
+
+        .table-wrap {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          overflow: hidden;
+          overflow-x: auto;
+        }
+
+        .empty-state {
+          text-align: center;
+          padding: 2rem;
+          color: var(--text-muted);
+          font-size: 13px;
+        }
+
+        .loading {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: var(--text-muted);
+          font-size: 13px;
+          padding: 0.5rem 0;
+        }
+        .spinner {
+          width: 14px; height: 14px;
+          border: 2px solid var(--border);
+          border-top-color: var(--green);
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        footer {
+          margin-top: 3rem;
+          font-family: 'DM Mono', monospace;
+          font-size: 11px;
+          color: var(--text-dim);
+          letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+
+    <header>
+        <p class="eyebrow">CS364 — Databases</p>
+        <h1>Route Explorer</h1>
+        <p class="desc">Advanced queries — click a card to expand and run</p>
+    </header>
+
+    <!-- ── QUERY 1: Top Shoe Brands ── -->
+    <div class="query-card" id="q1">
+        <div class="card-top" onclick="toggleCard('q1')">
+            <div class="card-top-left">
+                <span class="pill pill-green">Runners</span>
+                <div>
+                    <div class="card-title">Top shoe brands by terrain runners</div>
+                    <div class="card-subtitle">Shoes worn by fastest dirt &amp; gravel runners, grouped by brand</div>
+                </div>
+            </div>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="card-body-inner">
+                <div class="sql-block"><span class="sql-kw">SELECT</span>  r.shoes_worn,
+                    <span class="sql-fn">COUNT</span>(*) <span class="sql-kw">AS</span> runner_count,
+                    <span class="sql-fn">AVG</span>(r.runner_5kpr) <span class="sql-kw">AS</span> avg_5k_pr,
+                    <span class="sql-fn">AVG</span>(r.vo2) <span class="sql-kw">AS</span> avg_vo2,
+                    <span class="sql-fn">AVG</span>(r.total_miles) <span class="sql-kw">AS</span> avg_total_miles
+                    <span class="sql-kw">FROM</span> runner r
+                    <span class="sql-kw">WHERE</span> r.favorite_terrain <span class="sql-kw">ILIKE</span> <span class="sql-str">'gravel'</span>
+                    <span class="sql-kw">OR</span> r.favorite_terrain <span class="sql-kw">ILIKE</span> <span class="sql-str">'dirt'</span>
+                    <span class="sql-kw">GROUP BY</span> r.shoes_worn
+                    <span class="sql-kw">ORDER BY</span> avg_5k_pr <span class="sql-kw">ASC</span>
+                    <span class="sql-kw">LIMIT</span> <span class="sql-num">5</span>;</div>
+
+                <div class="controls">
+                    <button class="btn btn-green" onclick="runQ1()">▶ Run query</button>
+                </div>
+
+                <div class="result-area" id="q1-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ADD MORE QUERY CARDS BELOW THIS LINE ── -->
+
+    <hr class="divider" />
+    <footer>connected to localhost:8082</footer>
+
+</div>
+
+<script>
+    const BASE = 'http://localhost:8082';
+
+    // ── Card toggle ──
+    function toggleCard(id) {
+      document.getElementById(id).classList.toggle('open');
+    }
+
+    // ── Helpers ──
+    async function apiFetch(url) {
+      const res = await fetch(BASE + url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function showLoading(id) {
+      const el = document.getElementById(id);
+      el.className = 'result-area visible';
+      el.innerHTML = `<div class="loading"><div class="spinner"></div> Running query...</div>`;
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.className = 'result-area visible';
+      el.innerHTML = `<div class="error-msg">Error: ${msg}</div>`;
+    }
+
+    function showTable(id, columns, rows) {
+      const el = document.getElementById(id);
+      el.className = 'result-area visible';
+
+      if (!rows || rows.length === 0) {
+        el.innerHTML = `<div class="empty-state">No results found.</div>`;
+        return;
+      }
+
+      const rankClasses = ['gold', 'silver', 'bronze'];
+
+      const headers = columns.map(c =>
+        `<th>${c}</th>`
+      ).join('');
+
+      const bodyRows = rows.map((row, i) => {
+        const cells = row.map((cell, j) => {
+          if (j === 0 && columns[0] === '#') {
+            const cls = rankClasses[i] || '';
+            return `<td><span class="rank-badge ${cls}">${cell}</span></td>`;
+          }
+          return `<td>${cell ?? '—'}</td>`;
+        }).join('');
+        return `<tr>${cells}</tr>`;
+      }).join('');
+
+      el.innerHTML = `
+        <div class="result-label">${rows.length} row${rows.length !== 1 ? 's' : ''} returned</div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr>${headers}</tr></thead>
+            <tbody>${bodyRows}</tbody>
+          </table>
+        </div>`;
+    }
+
+    // ── Query 1: Top shoe brands ──
+    async function runQ1() {
+      showLoading('q1-result');
+      try {
+        const data = await apiFetch('/runners/top-shoes');
+        const columns = ['#', 'Shoe Brand', 'Runners', 'Avg 5K PR (min)', 'Avg VO2', 'Avg Miles'];
+        const rows = data.map((d, i) => [
+          i + 1,
+          d.shoesWorn,
+          d.runnerCount,
+          d.avg5kPr?.toFixed(2),
+          d.avgVo2?.toFixed(1),
+          d.avgTotalMiles?.toFixed(1)
+        ]);
+        showTable('q1-result', columns, rows);
+      } catch (e) {
+        showError('q1-result', e.message);
+      }
+    }
+
+    // ── Add more query functions below ──
+
+</script>
+</body>
+</html>
