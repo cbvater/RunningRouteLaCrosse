@@ -17,4 +17,5 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     @Query(value = "SELECT * FROM routes WHERE runner_rating >= :minRating ORDER BY runner_rating DESC", nativeQuery = true)
     List<Route> findTopRated(@Param("minRating") double minRating);
 
+
 }

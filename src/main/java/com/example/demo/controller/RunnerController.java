@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Runner;
+import com.example.demo.model.ShoeStatsDTO;
 import com.example.demo.service.RunnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,5 +25,10 @@ public class RunnerController {
     @PutMapping("/{id}/pr")
     public Runner updatePR(@PathVariable Long id, @RequestBody Map<String, Double> body) {
         return runnerService.updatePR(id, body.get("pr"));
+    }
+
+    @GetMapping("/top-shoes")
+    public List<ShoeStatsDTO> getTopShoes() {
+        return runnerService.getTopShoesByTerrainRunners();
     }
 }
