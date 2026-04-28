@@ -359,7 +359,74 @@
     </div>
 
     <!-- ── ADD MORE QUERY CARDS BELOW THIS LINE ── -->
+    <!-- ── QUERY 2: Mid-age high mileage runners ── -->
+    <div class="query-card" id="q2">
+        <div class="card-top" onclick="toggleCard('q2')">
+            <div class="card-top-left">
+                <span class="pill pill-blue">Runners + Routes</span>
+                <div>
+                    <div class="card-title">Mid-age high mileage runners</div>
+                    <div class="card-subtitle">Ages 18–40, 200+ miles, skipping top 5, ordered by total miles</div>
+                </div>
+            </div>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="card-body-inner">
+                <div class="sql-block"><span class="sql-kw">SELECT</span> r.runner_name, r.total_miles, ro.surface, a.area_name
+                    <span class="sql-kw">FROM</span> runner r
+                    <span class="sql-kw">LEFT OUTER JOIN</span> routes ro <span class="sql-kw">ON</span> r.favorite_route = ro.name
+                    <span class="sql-kw">LEFT OUTER JOIN</span> in_area ia <span class="sql-kw">ON</span> ro.route_id = ia.route_id
+                    <span class="sql-kw">LEFT OUTER JOIN</span> area a <span class="sql-kw">ON</span> ia.area_id = a.area_id
+                    <span class="sql-kw">WHERE</span> r.age <span class="sql-kw">BETWEEN</span> <span class="sql-num">18</span> <span class="sql-kw">AND</span> <span class="sql-num">40</span>
+                    <span class="sql-kw">GROUP BY</span> r.runner_name, r.total_miles, ro.surface, a.area_name
+                    <span class="sql-kw">HAVING</span> r.total_miles &gt; <span class="sql-num">200</span>
+                    <span class="sql-kw">ORDER BY</span> r.total_miles <span class="sql-kw">DESC</span>
+                    <span class="sql-kw">OFFSET</span> <span class="sql-num">5</span>;</div>
 
+                <div class="controls">
+                    <button class="btn btn-blue" onclick="runQ2()">▶ Run query</button>
+                </div>
+
+                <div class="result-area" id="q2-result"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ── QUERY 3: High elevation or above-avg mileage runners ── -->
+    <div class="query-card" id="q3">
+        <div class="card-top" onclick="toggleCard('q3')">
+            <div class="card-top-left">
+                <span class="pill pill-amber">Runners + Routes</span>
+                <div>
+                    <div class="card-title">High elevation or above-average mileage</div>
+                    <div class="card-subtitle">Favorite route 800ft+ gain, or more miles than city average</div>
+                </div>
+            </div>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="card-body-inner">
+                <div class="sql-block"><span class="sql-kw">SELECT</span> r.runner_name, r.city, r.favorite_route, r.total_miles, r.vo2
+                    <span class="sql-kw">FROM</span> runner r
+                    <span class="sql-kw">WHERE</span> r.favorite_route <span class="sql-kw">IN</span> (
+                    <span class="sql-kw">SELECT</span> ro.name <span class="sql-kw">FROM</span> routes ro <span class="sql-kw">WHERE</span> ro.ft_gain &gt; <span class="sql-num">800</span>
+                    )
+                    <span class="sql-kw">UNION</span>
+                    <span class="sql-kw">SELECT</span> r.runner_name, r.city, r.favorite_route, r.total_miles, r.vo2
+                    <span class="sql-kw">FROM</span> runner r
+                    <span class="sql-kw">WHERE</span> r.total_miles &gt; (
+                    <span class="sql-kw">SELECT</span> <span class="sql-fn">AVG</span>(r2.total_miles) <span class="sql-kw">FROM</span> runner r2 <span class="sql-kw">WHERE</span> r2.city = r.city
+                    )
+                    <span class="sql-kw">ORDER BY</span> city, total_miles <span class="sql-kw">DESC</span>;</div>
+
+                <div class="controls">
+                    <button class="btn btn-amber" onclick="runQ3()">▶ Run query</button>
+                </div>
+
+                <div class="result-area" id="q3-result"></div>
+            </div>
+        </div>
+    </div>
     <hr class="divider" />
     <footer>connected to localhost:8082</footer>
 
@@ -449,6 +516,42 @@
     }
 
     // ── Add more query functions below ──
+async function runQ2() {
+  showLoading('q2-result');
+  try {
+    const data = await apiFetch('/runners/mid-age-mileage');
+    const columns = ['#', 'Runner', 'Total Miles', 'Surface', 'Area'];
+    const rows = data.map((d, i) => [
+      i + 1,
+      d.runnerName,
+      d.totalMiles?.toFixed(1),
+      d.surface ?? '—',
+      d.areaName ?? '—'
+    ]);
+    showTable('q2-result', columns, rows);
+  } catch (e) {
+    showError('q2-result', e.message);
+  }
+}
+
+async function runQ3() {
+  showLoading('q3-result');
+  try {
+    const data = await apiFetch('/runners/high-elevation-or-above-avg');
+    const columns = ['Runner', 'City', 'Favorite Route', 'Total Miles', 'VO2'];
+    const rows = data.map(d => [
+      d.runnerName,
+      d.city,
+      d.favoriteRoute ?? '—',
+      d.totalMiles?.toFixed(1),
+      d.vo2
+    ]);
+    showTable('q3-result', columns, rows);
+  } catch (e) {
+    showError('q3-result', e.message);
+  }
+}
+
 
 </script>
 </body>

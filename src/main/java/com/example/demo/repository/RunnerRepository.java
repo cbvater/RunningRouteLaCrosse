@@ -24,4 +24,34 @@ public interface RunnerRepository extends JpaRepository<Runner, Long> {
     LIMIT 5
     """, nativeQuery = true)
     List<Object[]> findTopShoesByTerrainRunners();
+
+    @Query(value = """
+    SELECT r.runner_name, r.total_miles, ro.surface, a.area_name
+    FROM runner r
+    LEFT OUTER JOIN routes ro ON r.favorite_route = ro.name
+    LEFT OUTER JOIN in_area ia ON ro.id = ia.route_id
+    LEFT OUTER JOIN area a ON ia.area_id = a.area_id
+    WHERE r.age BETWEEN 18 AND 40
+    GROUP BY r.runner_name, r.total_miles, ro.surface, a.area_name
+    HAVING r.total_miles > 200
+    ORDER BY r.total_miles DESC
+    OFFSET 5
+    """, nativeQuery = true)
+    List<Object[]> findMidAgeMileageRunners();
+
+    @Query(value = """
+    SELECT r.runner_name, r.city, r.favorite_route, r.total_miles, r.vo2
+    FROM runner r
+    WHERE r.favorite_route IN (
+        SELECT ro.name FROM routes ro WHERE ro.ft_gain > 800
+    )
+    UNION
+    SELECT r.runner_name, r.city, r.favorite_route, r.total_miles, r.vo2
+    FROM runner r
+    WHERE r.total_miles > (
+        SELECT AVG(r2.total_miles) FROM runner r2 WHERE r2.city = r.city
+    )
+    ORDER BY city, total_miles DESC
+    """, nativeQuery = true)
+    List<Object[]> findHighElevationOrAboveAvgRunners();
 }

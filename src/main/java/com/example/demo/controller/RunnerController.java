@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Runner;
+import com.example.demo.model.RunnerRouteDTO;
+import com.example.demo.model.RunnerStatsDTO;
 import com.example.demo.model.ShoeStatsDTO;
 import com.example.demo.service.RunnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,16 @@ public class RunnerController {
     @GetMapping
     public List<Runner> getAllRunners() {
         return runnerService.getAllRunners();
+    }
+
+    @GetMapping("/high-elevation-or-above-avg")
+    public List<RunnerStatsDTO> getHighElevationOrAboveAvg() {
+        return runnerService.getHighElevationOrAboveAvgRunners();
+    }
+
+    @GetMapping("/mid-age-mileage")
+    public List<RunnerRouteDTO> getMidAgeMileage() {
+        return runnerService.getMidAgeMileageRunners();
     }
 
     @PutMapping("/{id}/pr")
