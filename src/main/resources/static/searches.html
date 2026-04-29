@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Route Explorer — Searches</title>
+    <title>Route, Reviews, & Runners Explorer</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600&display=swap" rel="stylesheet" />
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -318,9 +318,8 @@
 <div class="wrap">
 
     <header>
-        <p class="eyebrow">CS364 — Databases</p>
-        <h1>Route Explorer</h1>
-        <p class="desc">Advanced queries — click a card to expand and run</p>
+        <h1>Route, Reviews, & Runners Explorer</h1>
+        <p class="desc">Click a card to expand and search</p>
     </header>
 
     <!-- ── QUERY 1: Top Shoe Brands ── -->
@@ -424,6 +423,68 @@
                 </div>
 
                 <div class="result-area" id="q3-result"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ── QUERY 4: Top 5 highest-rated routes ── -->
+    <div class="query-card" id="q4">
+        <div class="card-top" onclick="toggleCard('q4')">
+            <div class="card-top-left">
+                <span class="pill pill-cyan">Routes</span>
+                <div>
+                    <div class="card-title">Top 5 highest-rated routes</div>
+                    <div class="card-subtitle">Ranked by average runner review rating</div>
+                </div>
+            </div>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="card-body-inner">
+                <div class="controls">
+                    <button class="btn btn-cyan" onclick="runQ4()">▶ Search</button>
+                </div>
+                <div class="result-area" id="q4-result"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ── QUERY 5: Active reviewers ── -->
+    <div class="query-card" id="q5">
+        <div class="card-top" onclick="toggleCard('q5')">
+            <div class="card-top-left">
+                <span class="pill pill-purple">Runners + Reviews</span>
+                <div>
+                    <div class="card-title">Most active route reviewers</div>
+                    <div class="card-subtitle">Runners who reviewed 2+ routes, with area context</div>
+                </div>
+            </div>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="card-body-inner">
+                <div class="controls">
+                    <button class="btn btn-purple" onclick="runQ5()">▶ Search</button>
+                </div>
+                <div class="result-area" id="q5-result"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ── QUERY 6: Featured routes ── -->
+    <div class="query-card" id="q6">
+        <div class="card-top" onclick="toggleCard('q6')">
+            <div class="card-top-left">
+                <div>
+                    <div class="card-title">Top Runners Featured Routes</div>
+                    <div class="card-subtitle">Find routes that are run from campus and that have been reviewed by sub 20min 5k runners.</div>
+                </div>
+            </div>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="card-body-inner">
+                <div class="controls">
+                    <button class="btn btn-green" onclick="runQ6()">▶ Search</button>
+                </div>
+                <div class="result-area" id="q6-result"></div>
             </div>
         </div>
     </div>
@@ -552,6 +613,54 @@ async function runQ3() {
   }
 }
 
+async function runQ4() {
+  showLoading('q4-result');
+  try {
+    const data = await apiFetch('/routes/top-rated-summary');
+    const columns = ['#', 'Route', 'Avg Rating', 'Reviews'];
+    const rows = data.map((d, i) => [
+      i + 1,
+      d.name,
+      '★ ' + d.avgRating?.toFixed(2),
+      d.reviewCount
+    ]);
+    showTable('q4-result', columns, rows);
+  } catch (e) {
+    showError('q4-result', e.message);
+  }
+}
+async function runQ5() {
+  showLoading('q5-result');
+  try {
+    const data = await apiFetch('/runners/active-reviewers');
+    const columns = ['Runner', 'Area', 'Reviews Written', 'Avg Rating Given'];
+    const rows = data.map(d => [
+      d.runnerName,
+      d.areaName ?? '—',
+      d.reviewsWritten,
+      '★ ' + d.avgGivenRating?.toFixed(2)
+    ]);
+    showTable('q5-result', columns, rows);
+  } catch (e) {
+    showError('q5-result', e.message);
+  }
+}
+async function runQ6() {
+  showLoading('q6-result');
+  try {
+    const data = await apiFetch('/routes/fast-reviewers-routes');
+    const columns = ['Route', 'Distance', 'Surface', 'Elevation Gain'];
+    const rows = data.map(d => [
+      d.name,
+      d.distance?.toFixed(1) + ' mi',
+      d.surface ?? '—',
+      d.ft_gain + ' ft'
+    ]);
+    showTable('q6-result', columns, rows);
+  } catch (e) {
+    showError('q6-result', e.message);
+  }
+}
 
 </script>
 </body>

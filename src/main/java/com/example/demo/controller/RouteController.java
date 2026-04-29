@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.FastRunnersReviewsDTO;
 import com.example.demo.model.Route;
+import com.example.demo.model.RouteRatingDTO;
 import com.example.demo.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +22,15 @@ public class RouteController {
         return routeService.getAllRoutes();
     }
 
-    @GetMapping("/top-rated")
-    public List<Route> getTopRated(@RequestParam double minRating) {
-        return routeService.getTopRatedRoutes(minRating);
+
+    // CHUCKS TOP 5 HIGHEST RATED ROUTES QUERY
+    @GetMapping("/top-rated-summary")
+    public List<RouteRatingDTO> getTopRatedSummary() {
+        return routeService.getTopRatedRoutes();
+    }
+
+    @GetMapping("/fast-reviewers-routes")
+    public List<FastRunnersReviewsDTO> getFastReviewersRoutes() {
+        return routeService.getFastReviewersRoutes();
     }
 }

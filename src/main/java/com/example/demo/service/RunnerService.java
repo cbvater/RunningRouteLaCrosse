@@ -1,9 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Runner;
-import com.example.demo.model.RunnerRouteDTO;
-import com.example.demo.model.RunnerStatsDTO;
-import com.example.demo.model.ShoeStatsDTO;
+import com.example.demo.model.*;
 import com.example.demo.repository.RunnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,6 +58,19 @@ public class RunnerService {
                         (String) row[2],
                         ((Number) row[3]).doubleValue(),
                         ((Number) row[4]).intValue()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // CHUCKS RUNNERS WHO REVIEWED AT LEAST 2 ROUTES, WITH FULL ROUTE AND AREA CONTEXT
+    public List<RunnerReviewStatsDTO> getActiveReviewers() {
+        return runnerRepository.findActiveReviewers()
+                .stream()
+                .map(row -> new RunnerReviewStatsDTO(
+                        (String) row[0],
+                        (String) row[1],
+                        ((Number) row[2]).longValue(),
+                        ((Number) row[3]).doubleValue()
                 ))
                 .collect(Collectors.toList());
     }

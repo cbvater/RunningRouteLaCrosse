@@ -54,4 +54,19 @@ public interface RunnerRepository extends JpaRepository<Runner, Long> {
     ORDER BY city, total_miles DESC
     """, nativeQuery = true)
     List<Object[]> findHighElevationOrAboveAvgRunners();
+
+    // CHUCKS RUNNERS WHO REVIEWED AT LEAST 2 ROUTES, WITH FULL ROUTE AND AREA CONTEXT
+    @Query(value = """
+    SELECT rn.runner_name, a.area_name, COUNT(rv.review_id) AS reviews_written, AVG(rv.rating) AS avg_given_rating
+    FROM runner rn
+    JOIN reviews rv ON rn.runner_id = rv.runner_id
+    JOIN routes ro ON rv.route_id = ro.id
+    JOIN in_area ia ON ro.id = ia.route_id
+    LEFT JOIN area a ON ia.area_id = a.area_id
+    GROUP BY rn.runner_id, rn.runner_name, a.area_id, a.area_name
+    HAVING COUNT(rv.review_id) >= 2
+    ORDER BY reviews_written DESC
+    LIMIT 10 OFFSET 20
+    """, nativeQuery = true)
+    List<Object[]> findActiveReviewers();
 }

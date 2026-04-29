@@ -328,22 +328,6 @@
     <div class="result" id="d-result"></div>
   </div>
 
-  <!-- ADVANCED -->
-  <div class="card">
-    <div class="card-header">
-      <span class="pill pill-adv">Advanced</span>
-      <span class="card-title">Find top-rated routes</span>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Minimum average rating</label>
-        <input type="number" id="a-min-rating" placeholder="e.g. 4.0" min="1" max="5" step="0.1" />
-      </div>
-    </div>
-    <button class="btn btn-adv" onclick="handleAdvanced()" style="margin-top:10px;">Search routes</button>
-    <div class="result" id="a-result"></div>
-  </div>
-
   <hr class="divider" />
   <footer>connected to localhost:8080</footer>
 
@@ -461,27 +445,6 @@
       await apiFetch('/reviews/' + id, { method: 'DELETE' });
       show('d-result', `Review ${id} deleted.`, 'success');
     } catch(e) { show('d-result', 'Error deleting review: ' + e.message, 'error'); }
-  }
-
-  async function handleAdvanced() {
-    const min = document.getElementById('a-min-rating').value;
-    if (!min) return show('a-result', 'Please enter a minimum rating.', 'error');
-    try {
-      const data = await apiFetch('/routes/top-rated?minRating=' + min);
-      if (!data || !data.length) return show('a-result', 'No routes found above that rating.', '');
-
-      const cards = data.map(r => `
-        <div class="review-card">
-          <div class="review-meta">
-            <div class="review-who">${r.name}</div>
-            <span class="review-rating">${parseFloat(r.runnerRating).toFixed(1)} / 5</span>
-          </div>
-          <div class="review-route">${r.distance} mi &nbsp;·&nbsp; ${r.surface} &nbsp;·&nbsp; ${r.ftGain} ft gain</div>
-        </div>
-      `).join('');
-
-      show('a-result', `<div class="review-list">${cards}</div>`);
-    } catch(e) { show('a-result', 'Error fetching routes: ' + e.message, 'error'); }
   }
 
   loadDropdowns();

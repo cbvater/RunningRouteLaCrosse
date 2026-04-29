@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Runner;
-import com.example.demo.model.RunnerRouteDTO;
-import com.example.demo.model.RunnerStatsDTO;
-import com.example.demo.model.ShoeStatsDTO;
+import com.example.demo.model.*;
 import com.example.demo.service.RunnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,4 +40,11 @@ public class RunnerController {
     public List<ShoeStatsDTO> getTopShoes() {
         return runnerService.getTopShoesByTerrainRunners();
     }
+
+    // CHUCKS RUNNERS WHO REVIEWED AT LEAST 2 ROUTES, WITH FULL ROUTE AND AREA CONTEXT
+    @GetMapping("/active-reviewers")
+    public List<RunnerReviewStatsDTO> getActiveReviewers() {
+        return runnerService.getActiveReviewers();
+    }
+
 }
