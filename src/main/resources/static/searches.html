@@ -326,9 +326,8 @@
     <div class="query-card" id="q1">
         <div class="card-top" onclick="toggleCard('q1')">
             <div class="card-top-left">
-                <span class="pill pill-green">Runners</span>
                 <div>
-                    <div class="card-title">Top shoe brands by terrain runners</div>
+                    <div class="card-title">Top shoe brands for terrain runners</div>
                     <div class="card-subtitle">Shoes worn by fastest dirt &amp; gravel runners, grouped by brand</div>
                 </div>
             </div>
@@ -336,20 +335,8 @@
         </div>
         <div class="card-body">
             <div class="card-body-inner">
-                <div class="sql-block"><span class="sql-kw">SELECT</span>  r.shoes_worn,
-                    <span class="sql-fn">COUNT</span>(*) <span class="sql-kw">AS</span> runner_count,
-                    <span class="sql-fn">AVG</span>(r.runner_5kpr) <span class="sql-kw">AS</span> avg_5k_pr,
-                    <span class="sql-fn">AVG</span>(r.vo2) <span class="sql-kw">AS</span> avg_vo2,
-                    <span class="sql-fn">AVG</span>(r.total_miles) <span class="sql-kw">AS</span> avg_total_miles
-                    <span class="sql-kw">FROM</span> runner r
-                    <span class="sql-kw">WHERE</span> r.favorite_terrain <span class="sql-kw">ILIKE</span> <span class="sql-str">'gravel'</span>
-                    <span class="sql-kw">OR</span> r.favorite_terrain <span class="sql-kw">ILIKE</span> <span class="sql-str">'dirt'</span>
-                    <span class="sql-kw">GROUP BY</span> r.shoes_worn
-                    <span class="sql-kw">ORDER BY</span> avg_5k_pr <span class="sql-kw">ASC</span>
-                    <span class="sql-kw">LIMIT</span> <span class="sql-num">5</span>;</div>
-
                 <div class="controls">
-                    <button class="btn btn-green" onclick="runQ1()">▶ Run query</button>
+                    <button class="btn btn-green" onclick="runQ1()">▶ Search</button>
                 </div>
 
                 <div class="result-area" id="q1-result"></div>
@@ -362,29 +349,22 @@
     <div class="query-card" id="q2">
         <div class="card-top" onclick="toggleCard('q2')">
             <div class="card-top-left">
-                <span class="pill pill-blue">Runners + Routes</span>
                 <div>
                     <div class="card-title">Mid-age high mileage runners</div>
-                    <div class="card-subtitle">Ages 18–40, 200+ miles, skipping top 5, ordered by total miles</div>
+                    <div class="card-subtitle">Ages 18–40, 200+ miles, skipping top 5</div>
                 </div>
             </div>
             <span class="chevron">▼</span>
         </div>
         <div class="card-body">
             <div class="card-body-inner">
-                <div class="sql-block"><span class="sql-kw">SELECT</span> r.runner_name, r.total_miles, ro.surface, a.area_name
-                    <span class="sql-kw">FROM</span> runner r
-                    <span class="sql-kw">LEFT OUTER JOIN</span> routes ro <span class="sql-kw">ON</span> r.favorite_route = ro.name
-                    <span class="sql-kw">LEFT OUTER JOIN</span> in_area ia <span class="sql-kw">ON</span> ro.route_id = ia.route_id
-                    <span class="sql-kw">LEFT OUTER JOIN</span> area a <span class="sql-kw">ON</span> ia.area_id = a.area_id
-                    <span class="sql-kw">WHERE</span> r.age <span class="sql-kw">BETWEEN</span> <span class="sql-num">18</span> <span class="sql-kw">AND</span> <span class="sql-num">40</span>
-                    <span class="sql-kw">GROUP BY</span> r.runner_name, r.total_miles, ro.surface, a.area_name
-                    <span class="sql-kw">HAVING</span> r.total_miles &gt; <span class="sql-num">200</span>
-                    <span class="sql-kw">ORDER BY</span> r.total_miles <span class="sql-kw">DESC</span>
-                    <span class="sql-kw">OFFSET</span> <span class="sql-num">5</span>;</div>
 
                 <div class="controls">
-                    <button class="btn btn-blue" onclick="runQ2()">▶ Run query</button>
+                    <div class="form-group">
+                        <label>Minimum total miles</label>
+                        <input type="number" id="q2-miles" placeholder="e.g. 200" min="0" style="width: 140px;" />
+                    </div>
+                    <button class="btn btn-blue" onclick="runQ2()">▶ Search</button>
                 </div>
 
                 <div class="result-area" id="q2-result"></div>
@@ -395,9 +375,8 @@
     <div class="query-card" id="q3">
         <div class="card-top" onclick="toggleCard('q3')">
             <div class="card-top-left">
-                <span class="pill pill-amber">Runners + Routes</span>
                 <div>
-                    <div class="card-title">High elevation or above-average mileage</div>
+                    <div class="card-title">Runners who like to run hills or run above-average mileage</div>
                     <div class="card-subtitle">Favorite route 800ft+ gain, or more miles than city average</div>
                 </div>
             </div>
@@ -405,23 +384,9 @@
         </div>
         <div class="card-body">
             <div class="card-body-inner">
-                <div class="sql-block"><span class="sql-kw">SELECT</span> r.runner_name, r.city, r.favorite_route, r.total_miles, r.vo2
-                    <span class="sql-kw">FROM</span> runner r
-                    <span class="sql-kw">WHERE</span> r.favorite_route <span class="sql-kw">IN</span> (
-                    <span class="sql-kw">SELECT</span> ro.name <span class="sql-kw">FROM</span> routes ro <span class="sql-kw">WHERE</span> ro.ft_gain &gt; <span class="sql-num">800</span>
-                    )
-                    <span class="sql-kw">UNION</span>
-                    <span class="sql-kw">SELECT</span> r.runner_name, r.city, r.favorite_route, r.total_miles, r.vo2
-                    <span class="sql-kw">FROM</span> runner r
-                    <span class="sql-kw">WHERE</span> r.total_miles &gt; (
-                    <span class="sql-kw">SELECT</span> <span class="sql-fn">AVG</span>(r2.total_miles) <span class="sql-kw">FROM</span> runner r2 <span class="sql-kw">WHERE</span> r2.city = r.city
-                    )
-                    <span class="sql-kw">ORDER BY</span> city, total_miles <span class="sql-kw">DESC</span>;</div>
-
                 <div class="controls">
-                    <button class="btn btn-amber" onclick="runQ3()">▶ Run query</button>
+                    <button class="btn btn-amber" onclick="runQ3()">▶ Search</button>
                 </div>
-
                 <div class="result-area" id="q3-result"></div>
             </div>
         </div>
@@ -430,10 +395,9 @@
     <div class="query-card" id="q4">
         <div class="card-top" onclick="toggleCard('q4')">
             <div class="card-top-left">
-                <span class="pill pill-cyan">Routes</span>
                 <div>
-                    <div class="card-title">Top 5 highest-rated routes</div>
-                    <div class="card-subtitle">Ranked by average runner review rating</div>
+                    <div class="card-title">Top 5 Highest Rated Routes</div>
+                    <div class="card-subtitle">Ranked by the average of all review ratings</div>
                 </div>
             </div>
             <span class="chevron">▼</span>
@@ -451,10 +415,9 @@
     <div class="query-card" id="q5">
         <div class="card-top" onclick="toggleCard('q5')">
             <div class="card-top-left">
-                <span class="pill pill-purple">Runners + Reviews</span>
                 <div>
-                    <div class="card-title">Most active route reviewers</div>
-                    <div class="card-subtitle">Runners who reviewed 2+ routes, with area context</div>
+                    <div class="card-title">Most Active Route Reviewers in Specific areas</div>
+                    <div class="card-subtitle">Runners and the area where they reviewed at least 2 routes</div>
                 </div>
             </div>
             <span class="chevron">▼</span>
@@ -474,7 +437,7 @@
             <div class="card-top-left">
                 <div>
                     <div class="card-title">Top Runners Featured Routes</div>
-                    <div class="card-subtitle">Find routes that are run from campus and that have been reviewed by sub 20min 5k runners.</div>
+                    <div class="card-subtitle">Find routes that have been reviewed by sub 20min 5k runners, and select max distance from campus.</div>
                 </div>
             </div>
             <span class="chevron">▼</span>
@@ -482,9 +445,77 @@
         <div class="card-body">
             <div class="card-body-inner">
                 <div class="controls">
+                    <div class="form-group">
+                        <label>Max miles from campus</label>
+                        <input type="number" id="q6-miles" placeholder="e.g. 10" min="0" style="width: 120px;" />
+                    </div>
                     <button class="btn btn-green" onclick="runQ6()">▶ Search</button>
                 </div>
                 <div class="result-area" id="q6-result"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ── QUERY 7: Top 3 routes with most reviews ── -->
+    <div class="query-card" id="q7">
+        <div class="card-top" onclick="toggleCard('q7')">
+            <div class="card-top-left">
+                <div>
+                    <div class="card-title">Top N Most Reviewed Routes(But only routes that are one word)</div>
+                    <div class="card-subtitle">Routes ranked by total review count</div>
+                </div>
+            </div>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="card-body-inner">
+                <div class="controls">
+                    <div class="form-group">
+                        <label>Number of routes</label>
+                        <input type="number" id="q7-topn" placeholder="e.g. 3" style="width: 120px;" />
+                    </div>
+                    <button class="btn btn-amber" onclick="runQ7()">▶ Search</button>
+                </div>
+                <div class="result-area" id="q7-result"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ── QUERY 8: Runners with multiple reviews ── -->
+    <div class="query-card" id="q8">
+        <div class="card-top" onclick="toggleCard('q8')">
+            <div class="card-top-left">
+                <div>
+                    <div class="card-title">Runners who have reviewed the same route more than twice</div>
+                    <div class="card-subtitle">Including the route they reviewed</div>
+                </div>
+            </div>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="card-body-inner">
+                <div class="controls">
+                    <button class="btn btn-blue" onclick="runQ8()">▶ Search</button>
+                </div>
+                <div class="result-area" id="q8-result"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ── QUERY 9: Routes reviewed by injured/non-injured runners ── -->
+    <div class="query-card" id="q9">
+        <div class="card-top" onclick="toggleCard('q9')">
+            <div class="card-top-left">
+                <div>
+                    <div class="card-title">Routes reviewed by injury status</div>
+                    <div class="card-subtitle">Injured runners avg &gt; 5.0, or non-injured avg &gt; 7.5</div>
+                </div>
+            </div>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="card-body-inner">
+                <div class="controls">
+                    <button class="btn btn-purple" onclick="runQ9()">▶ Search</button>
+                </div>
+                <div class="result-area" id="q9-result"></div>
             </div>
         </div>
     </div>
@@ -578,9 +609,11 @@
 
     // ── Add more query functions below ──
 async function runQ2() {
+  const miles = document.getElementById('q2-miles').value;
+  if (!miles) return showError('q2-result', 'Please enter a minimum mileage value.');
   showLoading('q2-result');
   try {
-    const data = await apiFetch('/runners/mid-age-mileage');
+    const data = await apiFetch('/runners/mid-age-mileage?minMiles=' + miles);
     const columns = ['#', 'Runner', 'Total Miles', 'Surface', 'Area'];
     const rows = data.map((d, i) => [
       i + 1,
@@ -646,9 +679,11 @@ async function runQ5() {
   }
 }
 async function runQ6() {
+  const miles = document.getElementById('q6-miles').value;
+  if (!miles) return showError('q6-result', 'Please enter a miles from campus value.');
   showLoading('q6-result');
   try {
-    const data = await apiFetch('/routes/fast-reviewers-routes');
+    const data = await apiFetch('/routes/fast-reviewers-routes?milesFromLax=' + miles);
     const columns = ['Route', 'Distance', 'Surface', 'Elevation Gain'];
     const rows = data.map(d => [
       d.name,
@@ -661,7 +696,56 @@ async function runQ6() {
     showError('q6-result', e.message);
   }
 }
+async function runQ7() {
+  const topN = document.getElementById('q7-topn').value || 3;
+  showLoading('q7-result');
+  try {
+    const data = await apiFetch('/routes/most-reviews-routes?topN=' + topN);
+    const columns = ['#', 'Route', 'Surface', 'Avg Rating', 'Total Reviews'];
+    const rows = data.map((d, i) => [
+      i + 1,
+      d.name,
+      d.surface ?? '—',
+      '★ ' + d.ratingAvg?.toFixed(2),
+      d.count
+    ]);
+    showTable('q7-result', columns, rows);
+  } catch (e) {
+    showError('q7-result', e.message);
+  }
+}
 
+async function runQ8() {
+  showLoading('q8-result');
+  try {
+    const data = await apiFetch('/runners/runners-with-multiple-reviews');
+    const columns = ['Runner', 'Route Reviewed', 'Total Reviews'];
+    const rows = data.map(d => [
+      d.runnerName,
+      d.routeName ?? '—',
+      d.totalReviews
+    ]);
+    showTable('q8-result', columns, rows);
+  } catch (e) {
+    showError('q8-result', e.message);
+  }
+}
+async function runQ9() {
+  showLoading('q9-result');
+  try {
+    const data = await apiFetch('/routes/injury-reviewed-routes');
+    const columns = ['Route', 'Elevation Gain', 'Distance', 'Surface'];
+    const rows = data.map(d => [
+      d.name,
+      d.ftGain + ' ft',
+      d.distance?.toFixed(1) + ' mi',
+      d.surface ?? '—'
+    ]);
+    showTable('q9-result', columns, rows);
+  } catch (e) {
+    showError('q9-result', e.message);
+  }
+}
 </script>
 </body>
 </html>

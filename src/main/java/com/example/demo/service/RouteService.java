@@ -1,8 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.model.FastRunnersReviewsDTO;
-import com.example.demo.model.Route;
-import com.example.demo.model.RouteRatingDTO;
+import com.example.demo.model.*;
 import com.example.demo.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,8 +32,8 @@ public class RouteService {
     }
 
     // CHUCKS FAST RUNNER REVIEWS FOR ROUTES CLOSE TO CAMPUS
-    public List<FastRunnersReviewsDTO> getFastReviewersRoutes(){
-        return routeRepository.reviewedByFast()
+    public List<FastRunnersReviewsDTO> getFastReviewersRoutes(int milesFromLax){
+        return routeRepository.reviewedByFast(milesFromLax)
                 .stream()
                 .map(row -> new FastRunnersReviewsDTO(
                         (String) row[0],
@@ -43,5 +41,29 @@ public class RouteService {
                         (String) row[2],
                         ((Number) row[3]).intValue()
                         )).collect(Collectors.toList());
+    }
+
+    // CONNOR TOP THREE ROUTES WITH MOST REVIEWS
+    public List<RoutesWithMostReviewsDTO> getRoutesWithMostReviews(int topN) {
+        return routeRepository.routesWithMostReviews(topN)
+                .stream()
+                .map(row -> new RoutesWithMostReviewsDTO(
+                        (String) row[0],
+                        (String) row[1],
+                        ((Number) row[2]).doubleValue(),
+                        ((Number) row[3]).intValue()
+                        )).collect(Collectors.toList());
+    }
+
+    public List<InjuredReviewRouteDTO> getRoutesByInjuryReviews() {
+        return routeRepository.findRoutesByInjuryReviews()
+                .stream()
+                .map(row -> new InjuredReviewRouteDTO(
+                        (String) row[0],
+                        ((Number) row[1]).intValue(),
+                        ((Number) row[2]).doubleValue(),
+                        (String) row[3]
+                ))
+                .collect(Collectors.toList());
     }
 }

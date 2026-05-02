@@ -40,7 +40,46 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                     FROM in_area 
                     WHERE area_id IN ( SELECT area_id 
                                         FROM area 
-                                        WHERE miles_from_lax = 0 ) )
+                                        WHERE miles_from_lax <= :milesFromLax ) )
     """, nativeQuery = true)
-    List<Object[]> reviewedByFast();
+    List<Object[]> reviewedByFast(@Param("milesFromLax") int milesFromLax);
+
+    // CONNOR TOP THREE ROUTES WITH MOST REVIEWS
+    @Query(value = """
+    Select routes.name, routes.surface, avg(routes.runner_rating), count(review_id) as totalReviews
+    From routes join reviews on routes.id = reviews.route_id
+    Where routes.name Not Like '% %'
+    Group by  routes.name, routes.surface
+    Order by count(review_id) DESC
+    limit :topN;
+    """, nativeQuery = true)
+    List<Object[]> routesWithMostReviews(@Param("topN") int topN);
+
+    // CONNOR INJURED REVIEWS QUERY
+    @Query(value = """
+    SELECT r.name, r.ft_gain, r.distance, r.surface
+    FROM routes AS r
+    WHERE r.id IN (
+        SELECT reviews.route_id
+        FROM reviews
+        WHERE reviews.runner_id IN (
+            SELECT runner.runner_id FROM runner WHERE runner.injury = TRUE
+        )
+        GROUP BY reviews.route_id
+        HAVING AVG(reviews.rating) > 5.0
+    )
+    UNION
+    SELECT r.name, r.ft_gain, r.distance, r.surface
+    FROM routes AS r
+    WHERE r.id IN (
+        SELECT reviews.route_id
+        FROM reviews
+        WHERE reviews.runner_id IN (
+            SELECT runner.runner_id FROM runner WHERE runner.injury = FALSE
+        )
+        GROUP BY reviews.route_id
+        HAVING AVG(reviews.rating) > 7.5
+    )
+    """, nativeQuery = true)
+    List<Object[]> findRoutesByInjuryReviews();
 }

@@ -23,9 +23,9 @@ public class RunnerService {
         runner.setRunner5KPR(pr.floatValue());
         return runnerRepository.save(runner);
     }
-
-    public List<RunnerRouteDTO> getMidAgeMileageRunners() {
-        return runnerRepository.findMidAgeMileageRunners()
+    // JOHNSON QUERY 2
+    public List<RunnerRouteDTO> getMidAgeMileageRunners(double minMiles) {
+        return runnerRepository.findMidAgeMileageRunners(minMiles)
                 .stream()
                 .map(row -> new RunnerRouteDTO(
                         (String) row[0],
@@ -71,6 +71,18 @@ public class RunnerService {
                         (String) row[1],
                         ((Number) row[2]).longValue(),
                         ((Number) row[3]).doubleValue()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // CONNOR RUNNERS THAT HAVE REVIEWED MORE THAN 2 ROUTES
+    public List<RunnerRouteReviewsDTO> getRunnersWithMultipleReviews() {
+        return runnerRepository.findRunnersWithMultipleReviews()
+                .stream()
+                .map(row -> new RunnerRouteReviewsDTO(
+                        (String) row[0],
+                        (String) row[1],
+                        ((Number) row[2]).longValue()
                 ))
                 .collect(Collectors.toList());
     }

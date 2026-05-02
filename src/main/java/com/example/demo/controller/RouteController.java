@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.FastRunnersReviewsDTO;
-import com.example.demo.model.Route;
-import com.example.demo.model.RouteRatingDTO;
+import com.example.demo.model.*;
 import com.example.demo.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +27,20 @@ public class RouteController {
         return routeService.getTopRatedRoutes();
     }
 
+    // CHUCK REVIEWED ROUTES BY FASTEST RUNNERS QUERY
     @GetMapping("/fast-reviewers-routes")
-    public List<FastRunnersReviewsDTO> getFastReviewersRoutes() {
-        return routeService.getFastReviewersRoutes();
+    public List<FastRunnersReviewsDTO> getFastReviewersRoutes(@RequestParam int milesFromLax) {
+        return routeService.getFastReviewersRoutes(milesFromLax);
+    }
+
+    // CONNOR TOP THREE ROUTES WITH MOST REVIEWS
+    @GetMapping("/most-reviews-routes")
+    public List<RoutesWithMostReviewsDTO> getRoutesWithMostReviews(@RequestParam int topN){
+        return routeService.getRoutesWithMostReviews(topN);
+    }
+
+    @GetMapping("/injury-reviewed-routes")
+    public List<InjuredReviewRouteDTO> getRoutesByInjuryReviews() {
+        return routeService.getRoutesByInjuryReviews();
     }
 }

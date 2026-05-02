@@ -26,9 +26,10 @@ public class RunnerController {
         return runnerService.getHighElevationOrAboveAvgRunners();
     }
 
+    // JOHNSON QUERY 2
     @GetMapping("/mid-age-mileage")
-    public List<RunnerRouteDTO> getMidAgeMileage() {
-        return runnerService.getMidAgeMileageRunners();
+    public List<RunnerRouteDTO> getMidAgeMileage(@RequestParam double minMiles) {
+        return runnerService.getMidAgeMileageRunners(minMiles);
     }
 
     @PutMapping("/{id}/pr")
@@ -47,4 +48,9 @@ public class RunnerController {
         return runnerService.getActiveReviewers();
     }
 
+    // CONNOR RUNNERS THAT HAVE REVIEWED MORE THAN 2 ROUTES
+    @GetMapping("/runners-with-multiple-reviews")
+    public List<RunnerRouteReviewsDTO> getRunnersWithMultipleReviews() {
+        return runnerService.getRunnersWithMultipleReviews();
+    }
 }
