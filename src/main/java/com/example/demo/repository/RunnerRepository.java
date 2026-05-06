@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface RunnerRepository extends JpaRepository<Runner, Long> {
 
+    // LOGAN QUERY 1
     @Query(value = """
     SELECT r.shoes_worn,
            COUNT(*) AS runner_count,

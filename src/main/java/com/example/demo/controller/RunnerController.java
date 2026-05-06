@@ -32,11 +32,13 @@ public class RunnerController {
         return runnerService.getMidAgeMileageRunners(minMiles);
     }
 
+    // UPDATE
     @PutMapping("/{id}/pr")
     public Runner updatePR(@PathVariable Long id, @RequestBody Map<String, Double> body) {
         return runnerService.updatePR(id, body.get("pr"));
     }
 
+    // LOGAN QUERRY 1
     @GetMapping("/top-shoes")
     public List<ShoeStatsDTO> getTopShoes() {
         return runnerService.getTopShoesByTerrainRunners();

@@ -36,6 +36,7 @@ public class RunnerService {
                 .collect(Collectors.toList());
     }
 
+    // LOGAN QUERY 1
     public List<ShoeStatsDTO> getTopShoesByTerrainRunners() {
         return runnerRepository.findTopShoesByTerrainRunners()
                 .stream()

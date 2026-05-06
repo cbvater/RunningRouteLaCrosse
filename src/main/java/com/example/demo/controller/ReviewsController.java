@@ -18,6 +18,7 @@ public class ReviewsController {
     @Autowired
     private ReviewsService reviewsService;
 
+    // CREATE
     @PostMapping
     public Reviews createReview(@RequestBody Map<String, Object> body) {
         Long runnerId = Long.valueOf(body.get("runnerId").toString());
@@ -27,11 +28,13 @@ public class ReviewsController {
         return reviewsService.createReview(runnerId, routeId, rating, comment);
     }
 
+    // READ
     @GetMapping("/route")
     public List<ReviewDTO> getReviewsByRoute(@RequestParam String name) {
         return reviewsService.getReviewsByRouteName(name);
     }
 
+    // DELETE
     @DeleteMapping("/{id}")
     public void deleteReview(@PathVariable Long id) {
         reviewsService.deleteReview(id);
